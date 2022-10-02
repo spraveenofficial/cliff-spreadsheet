@@ -1,6 +1,5 @@
 import Users from "../models/auth.js"
 import TokenService from "../services/token-services.js";
-import Error from "../handlers/error.js"
 
 
 // @desc    Register user
@@ -10,7 +9,6 @@ import Error from "../handlers/error.js"
 const register = async (req, res, next) => {
     try {
         const { username, password } = req.body;
-        console.log(req.body);
         if (!username || !password) {
             return next(new Error("Please fill all the fields", 400));
         }
@@ -30,5 +28,61 @@ const register = async (req, res, next) => {
     }
 }
 
+// @desc    Login user
+// @route   POST /api/v1/auth/register
+// @access  Public
 
-export { register };
+const login = async (req, res, next) => {
+    const { username, password } = req.body;
+    if (!username || !password) {
+        return next(new Error("Please fill all the fields", 400));
+    }
+    try {
+        const user = await Users.findOne({ username });
+        if (!user) {
+            return next(new Error("User Not Found", 404));
+        }
+        // Match Password
+        const isMatch = await user.matchPassword(password);
+        if (!isMatch) {
+            return next(new Error("Invalid Password", 401));
+        }
+        return res.status(200).json({
+            success: true,
+            message: "Successfully logged in",
+            data: user,
+            token: TokenService.generateAuthToken(user._id),
+        });
+    } catch (error) {
+        return next(new Error(error.message, 500));
+    }
+}
+
+// @desc    Check Username Availability
+// @route   POST /api/v1/auth/username
+// @access  Public
+
+const checkUsername = async (req, res, next) => {
+    const { username } = req.body;
+    if (!username) {
+        return next(new Error("Please fill all the fields", 400));
+    }
+    try {
+        const regex = /^[a-zA-Z0-9]+$/;
+        if (!regex.test(username)) {
+            return next(new Error("Username should not contain any special characters"));
+        }
+        const user = await Users.findOne({ username });
+        if (user) {
+            return next(new Error("Username already taken", 401));
+        }
+        return res.status(200).json({
+            success: true,
+            message: "Username available",
+        });
+    } catch (error) {
+        return next(new Error(error.message, 500));
+    }
+}
+
+export { register, login, checkUsername };

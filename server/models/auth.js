@@ -32,6 +32,14 @@ const AuthSchema = new Schema(
   }
 );
 
+// Checker to check the username does not contain any special characters
+AuthSchema.pre("save", async function (next) {
+  const regex = /^[a-zA-Z0-9]+$/;
+  if (!regex.test(this.username)) {
+    return next(new Error("Username should not contain any special characters"));
+  }
+})
+
 // Ecrypt Password
 AuthSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
