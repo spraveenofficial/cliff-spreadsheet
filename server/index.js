@@ -3,15 +3,14 @@ import "./database/db.js"
 import cors from "cors";
 import dotenv from "dotenv";
 import morgan from "morgan";
-import apiRoutes from "./routes/routes.js";
+import AuthRoutes from "./routes/auth-routes.js";
+
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3505;
-
 app.use(express.urlencoded({ extended: false }));
 
-// Registering morgan for development purpose
+// Registering morgan for development
 app.use(morgan("dev"));
 
 // Registering Cors
@@ -21,8 +20,15 @@ app.use(
   })
 );
 
-// Registering Express.json
+
 app.use(express.json());
+
+
+const PORT = process.env.PORT || 3505;
+
+// Registering Routes
+app.use("/v1/api/auth", AuthRoutes);
+
 
 // Handle 404 || errors
 
@@ -39,11 +45,6 @@ app.use((err, req, res, next) => {
     message: err.message,
   })
 })
-
-
-
-// Registering Routes aka All the API's here
-app.use("/", apiRoutes);
 
 // Server initialize
 app.listen(PORT, () => console.log(`App started running on ${PORT}`));
