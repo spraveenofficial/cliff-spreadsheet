@@ -1,8 +1,88 @@
 import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import reactSvg from "../../assets/react.svg";
+import { useCallback, useState } from "react";
+import axios from "../../https/axios";
+import { debounce } from "../../Utils/common";
+import { Spinner } from "@chakra-ui/react";
+import { useAssets } from "../../Hooks/assets";
+
 const Signup = () => {
   const navigate = useNavigate();
+  const { toast } = useAssets();
+  const [signupStatus, setSignupStatus] = useState({
+    message: "",
+    error: false,
+    success: false,
+    loading: false,
+  });
+
+  const [availibility, setAvailibility] = useState({
+    loading: false,
+    available: false,
+    error: false,
+    message: "",
+  });
+
+  const handleSignup = async (values) => {
+    setSignupStatus({ ...signupStatus, loading: true });
+    try {
+      const { data } = await axios.post("/auth/register", values);
+      setSignupStatus({
+        ...signupStatus,
+        message: data.message,
+        error: false,
+        success: true,
+        loading: false,
+      });
+      localStorage.setItem("token", data.token);
+      toast(data.message, "success");
+    } catch (error) {
+      setSignupStatus({
+        ...signupStatus,
+        message: error.response.data.message,
+        error: true,
+        success: false,
+        loading: false,
+      });
+      toast(error.response.data.message, "error");
+    }
+  };
+
+  const handleCheckAvailibility = async (e) => {
+    formik.setFieldTouched("username", true);
+    formik.setFieldValue("username", e.target.value);
+    setAvailibility({
+      message: "",
+      loading: false,
+      error: false,
+      available: false,
+    });
+    if (e.target.value.length < 6) return;
+    setAvailibility({ ...availibility, loading: true });
+    try {
+      const { data } = await axios.post("/auth/username", {
+        username: e.target.value,
+      });
+      await formik.setFieldError("username", "");
+      setAvailibility({
+        ...availibility,
+        message: data.message,
+        error: false,
+        available: true,
+        loading: false,
+      });
+    } catch (error) {
+      setAvailibility({
+        ...availibility,
+        message: error.response.data.message,
+        error: true,
+        available: false,
+        loading: false,
+      });
+      formik.setFieldError("username", error.response.data.message);
+    }
+  };
 
   const formik = useFormik({
     initialValues: {
@@ -11,8 +91,7 @@ const Signup = () => {
     },
 
     onSubmit: (values) => {
-      //   handleSignup(values);
-      console.log(values);
+      handleSignup(values);
     },
 
     validateOnChange: true,
@@ -24,6 +103,8 @@ const Signup = () => {
         errors.username = "Username must greater than 5 characters";
       } else if (values.username.length > 20) {
         errors.username = "Username must be smaller than 20 characters";
+      } else if (!availibility.available && availibility.message) {
+        errors.username = availibility.message;
       }
       if (!values.password) {
         errors.password = "Password is required";
@@ -50,6 +131,10 @@ const Signup = () => {
       ? "border-red-500 placeholder-red-900 text-red-900"
       : "border-indigo-900";
 
+  const debouncedHandleCheckAvailibility = useCallback(
+    debounce(handleCheckAvailibility, 600),
+    []
+  );
   return (
     <section className="py-26 bg-white">
       <div className="container px-4 mx-auto h-screen">
@@ -76,8 +161,21 @@ const Signup = () => {
                   type="text"
                   placeholder="@john_doe"
                   name="username"
+                  onChange={debouncedHandleCheckAvailibility}
                 />
+                {availibility.loading && (
+                  <div className="absolute right-4 top-5">
+                    <Spinner size="sm" color="indigo.900" />
+                  </div>
+                )}
               </div>
+              {availibility.available && (
+                <p
+                  className={`text-green-500 dark:text-green-500 text-sm mt-2`}
+                >
+                  {availibility.message}
+                </p>
+              )}
               <FormError name="username" />
             </div>
             <div className="mb-6">

@@ -1,9 +1,33 @@
+import { Spinner } from "@chakra-ui/react";
 import { useFormik } from "formik";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import reactSvg from "../../assets/react.svg";
+import { useAssets } from "../../Hooks/assets";
+import axios from "../../https/axios";
 
 const Login = () => {
   const navigate = useNavigate();
+  const { toast } = useAssets();
+  const [loginStatus, setLoginStatus] = useState({
+    success: false,
+    loading: false,
+  });
+
+  const handleUserLogin = async (values) => {
+    setLoginStatus({ ...loginStatus, loading: true });
+    try {
+      const { data } = await axios.post("/auth/login", values);
+      setLoginStatus({ ...loginStatus, success: true, loading: false });
+      toast(data.message, "success");
+      localStorage.setItem("token", data.token);
+      navigate("/dashboard");
+    } catch (error) {
+      setLoginStatus({ ...loginStatus, success: false, loading: false });
+      toast(error.response.data.message, "error");
+    }
+  };
+
   const formik = useFormik({
     initialValues: {
       username: "",
@@ -11,8 +35,7 @@ const Login = () => {
     },
 
     onSubmit: (values) => {
-      //   handleLogin(values);
-      console.log(values);
+      handleUserLogin(values);
     },
 
     validateOnChange: true,
@@ -111,7 +134,7 @@ const Login = () => {
               type="submit"
               className="inline-block w-full py-4 px-6 mb-6 text-center text-lg leading-6 text-white font-extrabold bg-indigo-800 hover:bg-indigo-900 border-3 border-indigo-900 shadow rounded transition duration-200"
             >
-              Sign in
+              {loginStatus.loading ? <Spinner size="sm" /> : "Sign in"}
             </button>
             <p
               onClick={() => navigate("/register")}
