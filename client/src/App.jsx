@@ -1,8 +1,12 @@
+import { Navbar } from "./Components";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
 function App() {
   return (
-    <div className="bg-red-400">
-      <h1>This is Test</h1>
-    </div>
+    <Router>
+      <Navbar />
+      <Routes></Routes>
+    </Router>
   );
 }
 
