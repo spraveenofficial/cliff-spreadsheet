@@ -11,7 +11,8 @@ const Signup = () => {
     },
 
     onSubmit: (values) => {
-      handleSignup(values);
+      //   handleSignup(values);
+      console.log(values);
     },
 
     validateOnChange: true,

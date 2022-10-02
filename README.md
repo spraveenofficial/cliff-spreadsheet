@@ -1,17 +1,22 @@
 # Cliff - Take Home Assignment
 
 ## Workflow
-1 -> Sign up : Singup using unique username and password (Username available check)
-2 -> Login : Login using username and password
-3 -> Subscriptions -> Google OAuth Gmail Address Add
-4 -> Dashboard -> View All Subscriptions
+*1* -> Sign up : Singup using unique username and password (Username available check) 
+*2* -> Login : Login using username and password
+*3* -> Subscriptions -> Google OAuth Gmail Address Add
+*4* -> Dashboard -> View All Subscriptions
 
 ## TODOS
-[]: # Install Chakra and Tailwind CSS - ✅
-[]: # Install Necessary Packages
-[]: # Setup React Router Dom
-[]: # 
-[]: # 
+### Install Chakra and Tailwind CSS - ✅
+### Install Necessary Packages - ✅
+### Setup React Router Dom - ✅
+### Signup Page - ✅
+### Login Page - ✅
+### Login Functionality - 
+### Signup Functionality -
+### Authentication -
+
+
 
 
 ## Tech Stacks
