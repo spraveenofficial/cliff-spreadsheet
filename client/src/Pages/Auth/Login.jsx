@@ -3,21 +3,24 @@ import { useFormik } from "formik";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import reactSvg from "../../assets/react.svg";
+import { useAuth } from "../../Context/auth-context";
 import { useAssets } from "../../Hooks/assets";
 import axios from "../../https/axios";
 
 const Login = () => {
   const navigate = useNavigate();
+  const { dispatch } = useAuth();
   const { toast } = useAssets();
   const [loginStatus, setLoginStatus] = useState({
     success: false,
     loading: false,
   });
 
-  const handleUserLogin = async (values) => {
+  const handleLogin = async (values) => {
     setLoginStatus({ ...loginStatus, loading: true });
     try {
       const { data } = await axios.post("/auth/login", values);
+      dispatch({ type: "USER_LOADED", payload: data.data });
       setLoginStatus({ ...loginStatus, success: true, loading: false });
       toast(data.message, "success");
       localStorage.setItem("token", data.token);
@@ -35,7 +38,7 @@ const Login = () => {
     },
 
     onSubmit: (values) => {
-      handleUserLogin(values);
+      handleLogin(values);
     },
 
     validateOnChange: true,
@@ -132,6 +135,7 @@ const Login = () => {
             </div>
             <button
               type="submit"
+              disabled={loginStatus.loading}
               className="inline-block w-full py-4 px-6 mb-6 text-center text-lg leading-6 text-white font-extrabold bg-indigo-800 hover:bg-indigo-900 border-3 border-indigo-900 shadow rounded transition duration-200"
             >
               {loginStatus.loading ? <Spinner size="sm" /> : "Sign in"}

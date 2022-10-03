@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
+import { useAuth } from "../../Context/auth-context";
 
 const navbarItems = [
   {
@@ -26,8 +27,20 @@ const navbarItems = [
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { isAuthenticated, user, dispatch } = useAuth();
 
-  const isAuthenticated = false; // TODO: Get this from the context/store
+  // const isAuthenticated = false; // TODO: Get this from the context/store
+  const handleLogout = () => {
+    dispatch({ type: "LOGOUT" });
+  };
+
+  const navItems = navbarItems.filter((item) => {
+    if (isAuthenticated) {
+      return item.access === "common";
+    }
+    return item.access === "public" || item.access === "common";
+  });
+
 
   return (
     <nav className="flex items-center bg-gray-800 p-3 flex-wrap">
@@ -55,7 +68,7 @@ const Navbar = () => {
         }`}
       >
         <div className="lg:inline-flex lg:flex-row lg:ml-auto lg:w-auto lg:items-center md:inline-flex md:flex-row md:ml-auto md:w-auto w-full md:items-center items-start  flex flex-col md:h-auto">
-          {navbarItems.map((item, index) => (
+          {navItems.map((item, index) => (
             <NavLink
               to={item.path}
               key={index}

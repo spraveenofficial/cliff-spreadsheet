@@ -36,6 +36,7 @@ const Signup = () => {
         loading: false,
       });
       localStorage.setItem("token", data.token);
+      dispatch({ type: "USER_LOADED", payload: data.data });
       toast(data.message, "success");
     } catch (error) {
       setSignupStatus({
@@ -50,19 +51,21 @@ const Signup = () => {
   };
 
   const handleCheckAvailibility = async (e) => {
+    const { value } = e.target;
     formik.setFieldTouched("username", true);
-    formik.setFieldValue("username", e.target.value);
+    formik.setFieldValue("username", value);
     setAvailibility({
       message: "",
       loading: false,
       error: false,
       available: false,
     });
-    if (e.target.value.length < 6) return;
+    if (value.length < 6) return;
+    if (value.length > 20) return;
     setAvailibility({ ...availibility, loading: true });
     try {
       const { data } = await axios.post("/auth/username", {
-        username: e.target.value,
+        username: value,
       });
       formik.setFieldError("username", "");
       setAvailibility({
@@ -93,8 +96,6 @@ const Signup = () => {
     onSubmit: (values) => {
       handleSignup(values);
     },
-
-    validateOnChange: true,
     validate: (values) => {
       let errors = {};
       if (!values.username) {
@@ -204,9 +205,10 @@ const Signup = () => {
             </div>
             <button
               type="submit"
+              disabled={signupStatus.loading}
               className="inline-block w-full py-4 px-6 mb-6 text-center text-lg leading-6 text-white font-extrabold bg-indigo-800 hover:bg-indigo-900 border-3 border-indigo-900 shadow rounded transition duration-200"
             >
-              Sign up
+              {signupStatus.loading ? <Spinner size="sm" /> : "Sign up"}
             </button>
             <p
               onClick={() => navigate("/login")}

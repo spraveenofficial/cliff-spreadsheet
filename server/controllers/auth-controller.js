@@ -85,4 +85,30 @@ const checkUsername = async (req, res, next) => {
     }
 }
 
-export { register, login, checkUsername };
+
+// @desc    Load Profile
+// @route   POST /api/v1/auth/profile
+// @access  Private
+
+const getProfile = async (req, res, next) => {
+    const { id } = req.user;
+    try {
+        const user = await Users.findById(id).select("-password");
+        if (!user) {
+            return next(new Error("User Not Found", 404));
+        }
+        // Todo: Get user's Subscriptions here
+        return res.status(200).json({
+            success: true,
+            message: "Profile loaded",
+            data: {
+                ...user._doc,
+            }
+        });
+    } catch (error) {
+        return next(new Error(error.message, 500));
+    }
+}
+
+
+export { register, login, checkUsername, getProfile };
