@@ -64,7 +64,7 @@ const Signup = () => {
       const { data } = await axios.post("/auth/username", {
         username: e.target.value,
       });
-      await formik.setFieldError("username", "");
+      formik.setFieldError("username", "");
       setAvailibility({
         ...availibility,
         message: data.message,
