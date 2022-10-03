@@ -104,7 +104,7 @@ const getProfile = async (req, res, next) => {
         if (!user) {
             return next(new Error("User Not Found", 404));
         }
-        const userSubscriptions = await Subscriptions.find({ userId: id });
+        const userSubscriptions = await Subscriptions.find({ userId: id }).select("-userId");
         return res.status(200).json({
             success: true,
             message: "Profile loaded",

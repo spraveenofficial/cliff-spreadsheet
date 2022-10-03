@@ -1,4 +1,6 @@
 import { google } from 'googleapis';
+import dbServices from './db-services.js';
+
 class GoggleServices {
     constructor() {
         this.name = this;
@@ -19,6 +21,7 @@ class GoggleServices {
 
 
     }
+    
     async getAuthUrl() {
         return this.client.generateAuthUrl({
             access_type: 'offline',
@@ -26,6 +29,37 @@ class GoggleServices {
             prompt: 'consent',
         });
     }
+
+    async refreshToken(subscription) {
+        const { refresh_token, email } = subscription
+        const { tokens } = await this.client.refreshToken(refresh_token);
+        await dbServices.updateAccessToken(email, tokens);
+        return tokens;
+    }
+
+
+    async OauthClient(subscription) {
+        const { access_token, refresh_token, expiry_date } = subscription;
+        if (expiry_date < Date.now()) {
+            subscription = await this.refreshToken(subscription);
+        }
+        this.client.setCredentials({ access_token, refresh_token });
+        return this.client;
+    }
+
+    async newOauthClient() {
+        const Oauth = new this.google.auth.OAuth2(
+            process.env.GOOGLE_CLIENT_ID,
+            process.env.GOOGLE_CLIENT_SECRET,
+            process.env.GOOGLE_REDIRECT_URL
+        );
+        Oauth.setCredentials({
+            refresh_token: process.env.GOOGLE_REFRESH_TOKEN
+        });
+        return Oauth;
+
+    }
+
     async googleCallBack(queryParams) {
         const { tokens } = await this.client.getToken(queryParams);
         this.client.setCredentials(tokens);
