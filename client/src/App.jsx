@@ -1,6 +1,6 @@
 import { Navbar } from "./Components";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { Login, Signup } from "./Pages";
+import { DashBoard, Login, Signup, Subscriptions } from "./Pages";
 import { useAuth } from "./Context/auth-context";
 import { Spinner } from "@chakra-ui/react";
 
@@ -19,8 +19,10 @@ function App() {
     <Router>
       <Navbar />
       <Routes>
+        <Route path="dashboard" element={<DashBoard />} />
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Signup />} />
+        <Route path="subscriptions" element={<Subscriptions />} />
       </Routes>
     </Router>
   );

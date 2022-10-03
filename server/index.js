@@ -4,7 +4,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import morgan from "morgan";
 import AuthRoutes from "./routes/auth-routes.js";
-
+import GoogleRoutes from "./routes/google-routes.js";
 dotenv.config();
 
 const app = express();
@@ -28,6 +28,7 @@ const PORT = process.env.PORT || 3505;
 
 // Registering Routes
 app.use("/v1/api/auth", AuthRoutes);
+app.use("/v1/api/google", GoogleRoutes);
 
 
 // Handle 404 || errors

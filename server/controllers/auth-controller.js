@@ -1,6 +1,6 @@
 import Users from "../models/auth.js"
 import TokenService from "../services/token-services.js";
-
+import Subscriptions from "../models/subscriptions.js";
 
 // @desc    Register user
 // @route   POST /api/v1/auth/register
@@ -16,7 +16,10 @@ const register = async (req, res, next) => {
         res.status(201).json({
             success: true,
             message: "Signup successful",
-            data: user,
+            data: {
+                ...user._doc,
+                subscriptions: [],
+            },
             token: TokenService.generateAuthToken(user._id),
         });
     } catch (error) {
@@ -38,7 +41,7 @@ const login = async (req, res, next) => {
         return next(new Error("Please fill all the fields", 400));
     }
     try {
-        const user = await Users.findOne({ username });
+        const user = await Users.findOne({ username })
         if (!user) {
             return next(new Error("User Not Found", 404));
         }
@@ -47,10 +50,14 @@ const login = async (req, res, next) => {
         if (!isMatch) {
             return next(new Error("Invalid Password", 401));
         }
+        const subscriptions = await Subscriptions.find({ userId: user._id }).select("-userId");
         return res.status(200).json({
             success: true,
             message: "Successfully logged in",
-            data: user,
+            data: {
+                ...user._doc,
+                subscriptions,
+            },
             token: TokenService.generateAuthToken(user._id),
         });
     } catch (error) {
@@ -87,7 +94,7 @@ const checkUsername = async (req, res, next) => {
 
 
 // @desc    Load Profile
-// @route   POST /api/v1/auth/profile
+// @route   GET /api/v1/auth/profile
 // @access  Private
 
 const getProfile = async (req, res, next) => {
@@ -97,12 +104,13 @@ const getProfile = async (req, res, next) => {
         if (!user) {
             return next(new Error("User Not Found", 404));
         }
-        // Todo: Get user's Subscriptions here
+        const userSubscriptions = await Subscriptions.find({ userId: id });
         return res.status(200).json({
             success: true,
             message: "Profile loaded",
             data: {
                 ...user._doc,
+                subscriptions: userSubscriptions,
             }
         });
     } catch (error) {
