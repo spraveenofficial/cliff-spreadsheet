@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { DashBoard, Login, Signup, Subscriptions } from "./Pages";
 import { useAuth } from "./Context/auth-context";
 import { Spinner } from "@chakra-ui/react";
+import { GuestRoutes, ProtectedRoutes } from "./Utils/routes";
 
 function App() {
   const { loading } = useAuth();
@@ -19,10 +20,14 @@ function App() {
     <Router>
       <Navbar />
       <Routes>
-        <Route path="dashboard" element={<DashBoard />} />
-        <Route path="login" element={<Login />} />
-        <Route path="register" element={<Signup />} />
-        <Route path="subscriptions" element={<Subscriptions />} />
+        <Route element={<ProtectedRoutes />}>
+          <Route path="dashboard" element={<DashBoard />} />
+          <Route path="subscriptions" element={<Subscriptions />} />
+        </Route>
+        <Route element={<GuestRoutes />}>
+          <Route path="login" element={<Login />} />
+          <Route path="register" element={<Signup />} />
+        </Route>
       </Routes>
     </Router>
   );
