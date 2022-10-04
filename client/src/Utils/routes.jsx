@@ -3,7 +3,6 @@ import { useAuth } from "../Context/auth-context";
 
 export const ProtectedRoutes = () => {
   const { isAuthenticated } = useAuth();
-  console.log("ProtectedRoutes", isAuthenticated);
   const location = useLocation();
   return isAuthenticated ? (
     <Outlet />
