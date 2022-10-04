@@ -107,7 +107,7 @@ const DashBoard = () => {
   if (state.error) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <p>{state.message}</p>
+        <p className="text-2xl font-bold text-red-700">{state.message}</p>
       </div>
     );
   }

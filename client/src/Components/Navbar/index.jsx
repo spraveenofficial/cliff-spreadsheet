@@ -41,7 +41,6 @@ const Navbar = () => {
     return item.access === "public" || item.access === "common";
   });
 
-
   return (
     <nav className="flex items-center bg-gray-800 p-3 flex-wrap">
       <a className="p-2 mr-4 inline-flex items-center">
