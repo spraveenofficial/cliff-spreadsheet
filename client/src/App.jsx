@@ -28,6 +28,7 @@ function App() {
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Signup />} />
         </Route>
+        <Route path="*" element={<GuestRoutes to="/login" />} />
       </Routes>
     </Router>
   );

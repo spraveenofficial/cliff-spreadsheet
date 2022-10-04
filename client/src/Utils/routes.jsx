@@ -11,12 +11,14 @@ export const ProtectedRoutes = () => {
   );
 };
 
-export const GuestRoutes = () => {
+export const GuestRoutes = (props) => {
   const { isAuthenticated } = useAuth();
+  if (props.to && !isAuthenticated)
+    return <Navigate to={props.to ?? "/login"} />;
   const location = useLocation();
   return !isAuthenticated ? (
     <Outlet />
   ) : (
-    <Navigate state={{ from: location }} replace to="/" />
+    <Navigate state={{ from: location }} replace to="/dashboard" />
   );
 };

@@ -6,10 +6,12 @@ import axios from "../../https/axios";
 import { debounce } from "../../Utils/common";
 import { Spinner } from "@chakra-ui/react";
 import { useAssets } from "../../Hooks/assets";
+import { useAuth } from "../../Context/auth-context";
 
 const Signup = () => {
   const navigate = useNavigate();
   const { toast } = useAssets();
+  const { dispatch } = useAuth();
   const [signupStatus, setSignupStatus] = useState({
     message: "",
     error: false,

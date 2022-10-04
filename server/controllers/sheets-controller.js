@@ -158,8 +158,8 @@ const addTracking = async (req, res, next) => {
     }
 }
 
-// @desc    Add Tracking for each sheet
-// @route   POST /api/v1/sheets/add
+// @desc    Get 
+// @route   POST /api/v1/sheets/trackings
 // @access  Private
 
 const getAllTracking = async (req, res, next) => {
@@ -178,6 +178,8 @@ const getAllTracking = async (req, res, next) => {
             if (!subscription) {
                 return next(new Error("You are not subscribed", 401));
             }
+            // Check which email is calling sheets
+            console.log("track.email", track.email);
             const oAuth2Client = await googleServices.OauthClient(subscription);
             const sheets = google.sheets({ version: 'v4', auth: oAuth2Client });
 
@@ -209,6 +211,7 @@ const getAllTracking = async (req, res, next) => {
             data: trackingData,
         });
     } catch (err) {
+        console.log("err", err);
         return next(new Error(err.message, 500));
     }
 }

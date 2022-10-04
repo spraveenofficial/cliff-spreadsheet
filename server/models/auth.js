@@ -38,6 +38,7 @@ AuthSchema.pre("save", async function (next) {
   if (!regex.test(this.username)) {
     return next(new Error("Username should not contain any special characters"));
   }
+  next();
 })
 
 // Ecrypt Password
