@@ -8,13 +8,25 @@
 
 ## TODOS
 #### Install Chakra and Tailwind CSS - ✅
-### Install Necessary Packages - ✅
-### Setup React Router Dom - ✅
-### Signup Page - ✅
-### Login Page - ✅
-### Login Functionality - ✅
-### Signup Functionality - ✅
-### Authentication -
+#### Install Necessary Packages - ✅
+#### Setup React Router Dom - ✅
+#### Signup Page - ✅
+#### Login Page - ✅
+#### Login Functionality - ✅
+#### Signup Functionality - ✅
+#### Dashboard Page - ✅
+#### Dashboard Functionality - ✅
+#### Subscriptions Page - ✅
+#### Subscriptions Functionality - ✅
+#### Google OAuth - ✅
+#### Google OAuth Functionality - ✅
+#### Google OAuth Gmail Address Add - ✅
+#### Google OAuth Gmail Address Remove - ✅
+#### Add Tracking Functionality - ✅
+#### Delete Tracking Functionality - ✅
+#### Authentication - ✅
+#### The caller does not have permission problem - Unresolved
+
 
 
 
