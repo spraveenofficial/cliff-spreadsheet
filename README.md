@@ -7,13 +7,13 @@
 *4* -> Dashboard -> View All Subscriptions
 
 ## TODOS
-### Install Chakra and Tailwind CSS - ✅
+#### Install Chakra and Tailwind CSS - ✅
 ### Install Necessary Packages - ✅
 ### Setup React Router Dom - ✅
 ### Signup Page - ✅
 ### Login Page - ✅
-### Login Functionality - 
-### Signup Functionality -
+### Login Functionality - ✅
+### Signup Functionality - ✅
 ### Authentication -
 
 
