@@ -6,7 +6,7 @@ import { Spinner, useDisclosure } from "@chakra-ui/react";
 import { AddTrackings } from "./AddTrackings";
 import moment from "moment";
 
-const AddedAccount = ({ name, email, picture, expiry_date }) => {
+const AddedAccount = ({ name, email, picture, createdAt }) => {
   const [loading, setLoading] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { toast } = useAssets();
@@ -44,12 +44,12 @@ const AddedAccount = ({ name, email, picture, expiry_date }) => {
           <Spinner size={"xl"} />
         </div>
       )}
-      <h1 className="text-xl font-bold">{name}</h1>
       <div className="demotext">
+        <h1 className="text-xl font-bold">{name}</h1>
         <p className="text-gray-500 text-sm">{email}</p>
       </div>
       <p className="text-gray-500 text-sm">
-        {moment(expiry_date).format("DD/MM/YYYY hh:mm A")}
+        {moment(createdAt).format("DD/MM/YYYY hh:mm A")}
       </p>
       <p
         onClick={onOpen}

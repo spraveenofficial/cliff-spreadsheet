@@ -1,5 +1,4 @@
 import Subscriptions from "../models/subscriptions.js";
-
 class SubscriptionDB {
     constructor() {
         this.Subscriptions = Subscriptions;
@@ -13,6 +12,10 @@ class SubscriptionDB {
             expiry_date,
             id_token
         }, { new: true });
+    }
+
+    async getUserSubscriptions(userId) {
+        return await this.Subscriptions.find({ userId }).select("name email picture createdAt");
     }
 }
 

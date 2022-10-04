@@ -8,7 +8,7 @@ const Subscriptions = () => {
     <div className="w-full min-h-screen flex justify-center">
       <div className="sm:mx-3 my-3 w-2/3 sm:w-full p-4 rounded border-dashed border-2 border-gray-300">
         <div className="flex items-center space-x-3">
-          <h1 className="text-2xl font-bold text-black">Your Subscriptions</h1>
+          <h2 className="text-2xl font-bold text-black ">Your Subscriptions</h2>
           <p className="text-gray-500">
             ({subscriptions.length} subscriptions)
           </p>

@@ -1,7 +1,6 @@
 import Users from "../models/auth.js"
 import TokenService from "../services/token-services.js";
-import Subscriptions from "../models/subscriptions.js";
-
+import dbServices from "../services/db-services.js";
 // @desc    Register user
 // @route   POST /api/v1/auth/register
 // @access  Public
@@ -41,7 +40,7 @@ const login = async (req, res, next) => {
         return next(new Error("Please fill all the fields", 400));
     }
     try {
-        const user = await Users.findOne({ username })
+        const user = await Users.findOne({ username }).select("-__v -updatedAt");
         if (!user) {
             return next(new Error("User Not Found", 404));
         }
@@ -50,7 +49,7 @@ const login = async (req, res, next) => {
         if (!isMatch) {
             return next(new Error("Invalid Password", 401));
         }
-        const subscriptions = await Subscriptions.find({ userId: user._id }).select("-userId");
+        const subscriptions = await dbServices.getUserSubscriptions(user.id);
         return res.status(200).json({
             success: true,
             message: "Successfully logged in",
@@ -100,11 +99,11 @@ const checkUsername = async (req, res, next) => {
 const getProfile = async (req, res, next) => {
     const { id } = req.user;
     try {
-        const user = await Users.findById(id).select("-password");
+        const user = await Users.findById(id).select("-password -__v -updatedAt");
         if (!user) {
             return next(new Error("User Not Found", 404));
         }
-        const userSubscriptions = await Subscriptions.find({ userId: id }).select("-userId");
+        const userSubscriptions = await dbServices.getUserSubscriptions(user.id);
         return res.status(200).json({
             success: true,
             message: "Profile loaded",

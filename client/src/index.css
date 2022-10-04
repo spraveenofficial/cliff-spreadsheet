@@ -156,7 +156,7 @@ a {
   background: var(--primary-color);
   border-radius: 0.625rem;
 }
-.demotext p {
+.demotext h1, .demotext p {
   white-space: nowrap;
   text-overflow: ellipsis;
   width: 90%;

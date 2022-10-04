@@ -29,7 +29,7 @@ const getSheets = async (req, res, next) => {
                 fields: 'files(id, name, createdTime, modifiedTime, webViewLink, iconLink, thumbnailLink, owners, permissions)',
             });
             clientFiles.push(...files.data.files);
-        
+
         }
         return res.status(200).json({
             success: true,
@@ -178,8 +178,6 @@ const getAllTracking = async (req, res, next) => {
             if (!subscription) {
                 return next(new Error("You are not subscribed", 401));
             }
-            // Check which email is calling sheets
-            console.log("track.email", track.email);
             const oAuth2Client = await googleServices.OauthClient(subscription);
             const sheets = google.sheets({ version: 'v4', auth: oAuth2Client });
 
@@ -215,4 +213,35 @@ const getAllTracking = async (req, res, next) => {
         return next(new Error(err.message, 500));
     }
 }
-export { getSheets, getEachAccountSheets, addTracking, getAllTracking }
+
+// @desc    Delete Tracking 
+// @route   DELETE /api/v1/sheets/trackings:id
+// @access  Private
+
+const deleteTracking = async (req, res, next) => {
+    try {
+        const { id } = req.user;
+        const { trackingId } = req.params;
+        const user = await Users.findById(id);
+        if (!user) {
+            return next(new Error("User Not Found", 404));
+        }
+        const tracking = await Tracking.findById(trackingId);
+        console.log("tracking", trackingId);
+        if (!tracking) {
+            return next(new Error("Tracking not found", 404));
+        }
+        await tracking.remove();
+        return res.status(200).json({
+            success: true,
+            message: "Tracking deleted successfully",
+            data: tracking,
+        });
+    } catch (err) {
+        console.log("err", err);
+        return next(new Error(err.message, 500));
+    }
+}
+
+
+export { getSheets, getEachAccountSheets, addTracking, getAllTracking, deleteTracking }
