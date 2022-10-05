@@ -47,6 +47,7 @@ class GoggleServices {
         return this.client;
     }
 
+    
     async newOauthClient() {
         const Oauth = new this.google.auth.OAuth2(
             process.env.GOOGLE_CLIENT_ID,
@@ -59,6 +60,7 @@ class GoggleServices {
         return Oauth;
 
     }
+    
 
     async googleCallBack(queryParams) {
         const { tokens } = await this.client.getToken(queryParams);

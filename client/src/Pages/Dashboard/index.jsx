@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "../../https/axios";
 import moment from "moment";
 import { useAuth } from "../../Context/auth-context";
@@ -20,11 +20,14 @@ const DashBoard = () => {
   });
 
   const handleFetchData = async () => {
-    if (user?.subscriptions.length === 0) {
+    if (
+      user?.subscriptions.length === 0 ||
+      (!state.loading && state.data.length === 0)
+    ) {
       setState({
         ...state,
         loading: false,
-        message: "No Trackings Found, Please Add Trackings",
+        message: "No Trackings Found, Add Trackings",
         error: true,
       });
       return;
@@ -104,6 +107,9 @@ const DashBoard = () => {
     );
   }
 
+  // Memoized ShowModal
+  const MemoizedModal = React.memo(ShowModal);
+
   if (state.loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -122,7 +128,7 @@ const DashBoard = () => {
   return (
     <div className="home h-screen p-4">
       <h1 className="text-2xl font-bold">Dashboard</h1>
-      <ShowModal
+      <MemoizedModal
         title="Are you Sure?"
         isOpen={isOpen}
         onOpen={onOpen}
@@ -135,20 +141,32 @@ const DashBoard = () => {
             <tr>
               <th
                 scope="col"
-                className="py-3 px-6 w-[45%] whitespace-nowrap overflow-hidden text-ellipsis"
+                className="py-3 px-4 w-[7%]  whitespace-nowrap overflow-hidden text-ellipsis"
+              >
+                Status
+              </th>
+              <th
+                scope="col"
+                className="py-3 px-6 w-[40%] sm:w-[30%] whitespace-nowrap overflow-hidden text-ellipsis"
               >
                 Name
               </th>
-              <th scope="col" className="py-3 px-6">
-                <div className="flex items-center">Sheet</div>
+              <th
+                scope="col"
+                className="py-3 px-6 w-[15%] sm:w-[20%] whitespace-nowrap overflow-hidden text-ellipsis"
+              >
+                <div>Sheet</div>
               </th>
-              <th scope="col" className="py-3 px-6">
+              <th scope="col" className="py-4 px-4 w-[10%] sm:w-fit">
                 <div className="flex items-center">Columns</div>
               </th>
-              <th scope="col" className="py-3 px-6 w-2/7">
+              <th scope="col" className="py-3 px-6  w-2/7 sm:hidden">
                 <div className="flex items-center">Created at</div>
               </th>
-              <th scope="col" className="py-3 px-6">
+              <th
+                scope="col"
+                className="py-3 px-6 sm:w-fit w-[10%] whitespace-nowrap overflow-hidden text-ellipsis"
+              >
                 <div className="flex justify-end">Action</div>
               </th>
             </tr>
@@ -159,15 +177,24 @@ const DashBoard = () => {
                 key={item.id}
                 className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
               >
-                <td className="py-4 px-6 font-medium text-gray-900 overflow-hidden text-ellipsis whitespace-nowrap dark:text-white">
+                <td className="py-3 relative px-6 font-medium text-gray-900 overflow-hidden text-ellipsis whitespace-nowrap dark:text-white">
+                  <span
+                    className={`top-5 left-5 absolute w-3 h-3 border-2 border-white dark:border-gray-800 rounded-full ${
+                      item.isTracking ? "bg-green-500" : "bg-red-500"
+                    }`}
+                  ></span>
+                </td>
+                <td className="py-3 px-6 font-medium text-gray-900 overflow-hidden text-ellipsis whitespace-nowrap dark:text-white">
                   {item.spreadSheetName}
                 </td>
-                <td className="py-4 px-6">{item.sheetName}</td>
-                <td className="py-4 px-6 font-bold">{item.columnLength}</td>
-                <td className="py-4 px-6 overflow-hidden text-ellipsis whitespace-nowrap">
+                <td className="py-3 px-6 overflow-hidden text-ellipsis whitespace-nowrap">
+                  {item.sheetName}
+                </td>
+                <td className="py-3 px-6 font-bold">{item.columnLength}</td>
+                <td className="sm:hidden py-3 px-6 overflow-hidden text-ellipsis whitespace-nowrap">
                   {moment(item.createdAt).format("DD/MM/YYYY, h:mm a")}
                 </td>
-                <td className="py-4 px-6 text-right">
+                <td className="py-3 px-6 text-right">
                   <i
                     onClick={() => handleModal(item.id)}
                     className="cursor-pointer material-icons text-md text-red-700"

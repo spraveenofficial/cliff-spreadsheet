@@ -4,42 +4,6 @@ import Subscription from "../models/subscriptions.js"
 import Tracking from '../models/trackings.js';
 import googleServices from '../services/google-services.js';
 
-// @desc    Get Sheets
-// @route   POST /api/v1/sheets
-// @access  Private
-
-
-const getSheets = async (req, res, next) => {
-    const { id } = req.user;
-    try {
-        const user = await Users.findById(id);
-        if (!user) {
-            return next(new Error("User Not Found", 404));
-        }
-        const subscription = await Subscription.find({ userId: user._id });
-        if (!subscription) {
-            return next(new Error("You are not subscribed", 401));
-        }
-        var clientFiles = [];
-        for (let i = 0; i < subscription.length; i++) {
-            const oAuth2Client = await googleServices.OauthClient(subscription[i]);
-            const drive = google.drive({ version: 'v3', auth: oAuth2Client });
-            const files = await drive.files.list({
-                q: "mimeType='application/vnd.google-apps.spreadsheet'",
-                fields: 'files(id, name, createdTime, modifiedTime, webViewLink, iconLink, thumbnailLink, owners, permissions)',
-            });
-            clientFiles.push(...files.data.files);
-
-        }
-        return res.status(200).json({
-            success: true,
-            message: "Files fetched successfully",
-            data: clientFiles
-        });
-    } catch (err) {
-        return next(new Error(err.message, 500));
-    }
-}
 
 // @desc    Get Each Account Sheets
 // @route   POST /api/v1/sheets/data
@@ -102,7 +66,7 @@ const getEachAccountSheets = async (req, res, next) => {
 const addTracking = async (req, res, next) => {
     try {
         const { id } = req.user;
-        const { email, sheetId, sheetName } = req.body;
+        const { email, sheetId, sheetName, spreadsheetName } = req.body;
         const user = await Users.findById(id);
         if (!user) {
             return next(new Error("User Not Found", 404));
@@ -124,7 +88,7 @@ const addTracking = async (req, res, next) => {
         });
         const file = files.data.files.find((file) => file.id === sheetId);
         if (!file) {
-            return next(new Error("Sheet not found", 404));
+            return next(new Error("Sheets not found", 404));
         }
         // const isShared = file.permissions?.find((permission) => {
         //     if (permission.type === "user" && permission.emailAddress === email) {
@@ -145,7 +109,8 @@ const addTracking = async (req, res, next) => {
             userId: user._id,
             email,
             sheetId,
-            sheetName
+            sheetName,
+            spreadsheetName
         });
 
         return res.status(200).json({
@@ -180,36 +145,48 @@ const getAllTracking = async (req, res, next) => {
             }
             const oAuth2Client = await googleServices.OauthClient(subscription);
             const sheets = google.sheets({ version: 'v4', auth: oAuth2Client });
-
-            const sheetsResponse = await sheets.spreadsheets.get({
-                spreadsheetId: track.sheetId,
-                includeGridData: true,
-                fields: 'properties.title',
-            });
-            const sheetData = await sheets.spreadsheets.values.get({
-                spreadsheetId: track.sheetId,
-                range: `${track.sheetName}!A1:Z1000`,
-            });
-            const sheetUrl = `https://docs.google.com/spreadsheets/d/${track.sheetId}/edit#gid=0`;
-            return {
-                id: track._id,
-                email: track.email,
-                spreadSheetName: sheetsResponse.data.properties.title,
-                sheetId: track.sheetId,
-                sheetName: track.sheetName,
-                columnLength: sheetData.data.values ? sheetData.data.values.length : 0,
-                sheetUrl,
-                createdAt: track.createdAt,
+            try {
+                const sheetsResponse = await sheets.spreadsheets.get({
+                    spreadsheetId: track.sheetId,
+                    includeGridData: true,
+                    fields: 'properties.title',
+                });
+                const sheetData = await sheets.spreadsheets.values.get({
+                    spreadsheetId: track.sheetId,
+                    range: `${track.sheetName}!A1:Z1000`,
+                });
+                const sheetUrl = `https://docs.google.com/spreadsheets/d/${track.sheetId}/edit#gid=0`;
+                return {
+                    id: track._id,
+                    isTracking: true,
+                    email: track.email,
+                    spreadSheetName: sheetsResponse.data.properties.title,
+                    sheetId: track.sheetId,
+                    sheetName: track.sheetName,
+                    columnLength: sheetData.data.values ? sheetData.data.values.length : 0,
+                    sheetUrl,
+                    createdAt: track.createdAt,
+                }
+            } catch (error) {
+                return {
+                    id: track._id,
+                    isTracking: false,
+                    email: track.email,
+                    spreadSheetName: track.spreadsheetName,
+                    sheetId: track.sheetId,
+                    sheetName: track.sheetName,
+                    columnLength: 0,
+                    sheetUrl: "",
+                    createdAt: track.createdAt,
+                }
             }
         }));
-
         return res.status(200).json({
             success: true,
             message: "Tracking fetched successfully",
             data: trackingData,
         });
     } catch (err) {
-        console.log("err", err);
         return next(new Error(err.message, 500));
     }
 }
@@ -227,7 +204,6 @@ const deleteTracking = async (req, res, next) => {
             return next(new Error("User Not Found", 404));
         }
         const tracking = await Tracking.findById(trackingId);
-        console.log("tracking", trackingId);
         if (!tracking) {
             return next(new Error("Tracking not found", 404));
         }
@@ -238,10 +214,9 @@ const deleteTracking = async (req, res, next) => {
             data: tracking,
         });
     } catch (err) {
-        console.log("err", err);
         return next(new Error(err.message, 500));
     }
 }
 
 
-export { getSheets, getEachAccountSheets, addTracking, getAllTracking, deleteTracking }
+export { getEachAccountSheets, addTracking, getAllTracking, deleteTracking }

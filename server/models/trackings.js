@@ -16,6 +16,10 @@ const TrackingSchema = new Schema({
         type: String,
         required: true
     },
+    spreadsheetName: {
+        type: String,
+        required: true
+    },
     sheetName: {
         type: String,
         required: true

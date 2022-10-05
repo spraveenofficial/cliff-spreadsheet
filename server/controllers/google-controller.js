@@ -1,7 +1,7 @@
 import Users from "../models/auth.js"
 import Subscription from "../models/subscriptions.js"
 import googleServices from "../services/google-services.js";
-
+import dbServices from "../services/db-services.js";
 // @desc    Add Google Account
 // @route   POST /api/v1/google/add
 // @access  Private
@@ -76,7 +76,7 @@ const removeGoogleAccount = async (req, res, next) => {
         if (!subscription) {
             return next(new Error("You have not added this account", 400));
         }
-        // TODO: Remove all the traces of the account from the database
+        await dbServices.removeTrackings(email, user.id);
         await subscription.remove();
         return res.status(200).json({
             success: true,

@@ -19,9 +19,11 @@ const AddTrackings = ({ email, isOpen, onOpen, onClose }) => {
   const [selected, setSelected] = useState({
     sheetId: "",
     sheetName: "",
+    spreadsheetName: "",
   });
 
-  const isDisabled = !selected.sheetId || !selected.sheetName;
+  const isDisabled =
+    !selected.spreadsheetName || !selected.sheetId || !selected.sheetName;
 
   const handleLoadTrackings = async () => {
     setState({ ...state, loading: true });
@@ -49,6 +51,14 @@ const AddTrackings = ({ email, isOpen, onOpen, onClose }) => {
 
   const handleSelect = (e) => {
     const { name, value } = e.target;
+    if (name === "sheetId") {
+      const sheet = state.data.find((sheet) => sheet.id === value);
+      return setSelected({
+        ...selected,
+        sheetId: value,
+        spreadsheetName: sheet.name,
+      });
+    }
     setSelected({ ...selected, [name]: value });
   };
 
@@ -57,7 +67,7 @@ const AddTrackings = ({ email, isOpen, onOpen, onClose }) => {
       handleLoadTrackings();
     }
   }, [isOpen]);
-  
+
   const handleAddTrackings = async () => {
     setIsAdding(true);
     try {
@@ -65,6 +75,7 @@ const AddTrackings = ({ email, isOpen, onOpen, onClose }) => {
         email,
         sheetId: selected.sheetId,
         sheetName: selected.sheetName,
+        spreadsheetName: selected.spreadsheetName,
       });
       toast(data.message, data.success ? "success" : "error");
       onClose();
