@@ -29,7 +29,7 @@ export function setupInterceptorsTo(axiosInstance) {
 
 // Setup interceptors on axios instance
 const instance = setupInterceptorsTo(axios.create({
-    baseURL: "http://localhost:4001/v1/api",
+    baseURL: import.meta.env.VITE_MODE != "development" ? "http://localhost:4001/v1/api" : "https://cliff-spreadsheet-backend.vercel.app/v1/api",
     headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
