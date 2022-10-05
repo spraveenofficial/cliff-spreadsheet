@@ -9,6 +9,7 @@ import { useAssets } from "../../Hooks/assets";
 const DashBoard = () => {
   const { user } = useAuth();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [isDeleting, setIsDeleting] = useState(false);
   const [selected, setSelected] = useState(null);
   const { toast } = useAssets();
   const [state, setState] = useState({
@@ -60,6 +61,7 @@ const DashBoard = () => {
   };
 
   const handleDeleteTracking = async () => {
+    setIsDeleting(true);
     try {
       const { data } = await axios.delete(`/sheets/trackings/${selected}`);
       if (data.success) {
@@ -73,9 +75,10 @@ const DashBoard = () => {
     } catch (error) {
       toast(error.response.data.message, "error");
     }
+    setIsDeleting(false);
   };
 
-  function ShowModal({ isOpen, onOpen, onClose }) {
+  function ShowModal({ isOpen, onOpen, onClose, isDeleting }) {
     return (
       <MyModal isOpen={isOpen} onOpen={onOpen} onClose={onClose}>
         <div className="flex flex-col text-center mb-4 space-y-2 justify-center items-center h-24">
@@ -88,7 +91,12 @@ const DashBoard = () => {
           <Button onClick={onClose} colorScheme="red">
             Cancel
           </Button>
-          <Button onClick={handleDeleteTracking} colorScheme="green">
+          <Button
+            isLoading={isDeleting}
+            loadingText="Deleting"
+            onClick={handleDeleteTracking}
+            colorScheme="green"
+          >
             Confirm
           </Button>
         </div>
@@ -119,6 +127,7 @@ const DashBoard = () => {
         isOpen={isOpen}
         onOpen={onOpen}
         onClose={onClose}
+        isDeleting={isDeleting}
       />
       <div className="overflow-x-auto relative shadow-md sm:rounded-lg mt-4">
         <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400 table-fixed">
