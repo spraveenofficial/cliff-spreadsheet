@@ -66,5 +66,20 @@ This is Spreadsheet Monitoring Application made on MERN stack. In this applicati
 - Mongoose (v5.13.2)
 
 
+## Installation
+
+#### Clone the repository
+
+```bash
+git clone https://github.com/spraveenofficial/cliff-spreadsheet.git
+cd cliff-spreadsheet
+cd client
+npm install
+npm run dev
+cd ..
+cd server
+npm install
+npm run dev
+```
 
 
