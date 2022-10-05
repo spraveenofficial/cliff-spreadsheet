@@ -1,6 +1,9 @@
 # Cliff - Take Home Assignment
 
 ## Workflow
+
+<img src="/client/src/assets/User.png" class="width: 100%;" alt="Talkline Social Media Application" />
+
 *1* -> Sign up : Singup using unique username and password (Username available check) 
 *2* -> Login : Login using username and password
 *3* -> Subscriptions -> Google OAuth Gmail Address Add
