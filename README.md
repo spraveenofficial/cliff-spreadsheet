@@ -2,6 +2,8 @@
 
 This is Spreadsheet Monitoring Application made on MERN stack. In this application you can add your multiple Gmail/email account and track each of the spreadsheet associated with that gmail account from your fingertip.
 
+Live Preview - <a href="https://cliff-spreadsheet.vercel.app" target="_blank">Click Here</a>
+
 ## Workflow
 
 <img src="/client/src/assets/User.png" class="width: 100%;" alt="Talkline Social Media Application" />
