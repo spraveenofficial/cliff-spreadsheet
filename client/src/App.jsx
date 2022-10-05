@@ -7,7 +7,6 @@ import { GuestRoutes, ProtectedRoutes } from "./Utils/routes";
 
 function App() {
   const { loading } = useAuth();
-
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
